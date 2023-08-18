@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  vars_files: ./vars.yaml
+
+  tasks: 
+    - name: 05. VyOS Router Configuration
+      community.vmware.vmware_vm_shell:
+        validate_certs: 'false'
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "{{ folder_prefix + project_id }}"
+        vm_id: "{{ project_id + '-Router' }}"
+        vm_id_type: vm_name
+        vm_username: 'vyos'
+        vm_password: 'vyos'
+        vm_shell: /bin/vbash
+        vm_shell_cwd: "/tmp"
+        vm_shell_args: |- 
+          -c "source /opt/vyatta/etc/functions/script-template
+          configure
+          set system login user admin full-name Admin_User
+          set system login user admin authentication plaintext-password VMware1!
+          set service ssh port 22
+            
+          set system ipv6 disable
+          
+          set interfaces ethernet eth0 address dhcp
+          set interfaces ethernet eth0 description Outside
+          set interfaces ethernet eth0 ipv6 address no-default-link-local
+          set protocols static route 0.0.0.0/0 next-hop 192.168.3.1
+
+          set interfaces ethernet eth1 description 'Openshift Network'
+          set interfaces ethernet eth1 address 10.10.10.1/24
+          set interfaces ethernet eth0 ipv6 address no-default-link-local
+
+          set system name-server 192.168.3.3
+          set system ntp server kr.pool.ntp.org
+
+          set nat source rule 10 outbound-interface eth0
+          set nat source rule 10 source address 10.10.10.0/24
+          set nat source rule 10 translation address masquerade
+
+          set service dhcp-server shared-network-name Openshift subnet 10.10.10.0/24 default-router '10.10.10.1'
+          set service dhcp-server shared-network-name Openshift subnet 10.10.10.0/24 name-server '10.10.10.2'
+          set service dhcp-server shared-network-name Openshift subnet 10.10.10.0/24 domain-name 'vclass.local'
+          set service dhcp-server shared-network-name Openshift subnet 10.10.10.0/24 range 0 start '10.10.10.100'
+          set service dhcp-server shared-network-name Openshift subnet 10.10.10.0/24 range 0 stop '10.10.10.200'
+           
+          commit
+          save"
+        wait_for_process: true
+        timeout: 180
+      delegate_to: localhost
+      register: shell_command_with_wait_timeout

@@ -7,8 +7,13 @@ datacenter_name: "RECA3"
 
 project_id: "P04"
 
-
-esxi_hostname: "esxi-04.vclass.reca3"
+esxi_hostname: "esxi-04.vclass.reca3" # == 172.16.1.14 
 esxi_password: "VMware1!"
 esxi_username: "root"
 
+folder_prefix: "RECA3/vm/4.Projects/"
+
+datastore_name: 'RECA3-04'
+
+public_net: "VM-172.16.1.x"
+private_net: "{{ project_id + '-Openshift' }}"

@@ -3,11 +3,13 @@
   vars_files: ./vars.yaml
 
   tasks:
-  - name: Create Project Standard vSwitch
+  - name: 02. Create Project Standard vSwitch
     community.vmware.vmware_vswitch:
       hostname: '{{ esxi_hostname }}'
       username: '{{ esxi_username }}'
       password: '{{ esxi_password }}'
-      switch: vswitch_'{{ Project_ID }}'
-      mtu: 9000
-  delegate_to: localhost
+      switch: '{{ project_id }}'
+      validate_certs: no
+    delegate_to: localhost
+
+  

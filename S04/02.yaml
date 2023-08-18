@@ -55,7 +55,7 @@
           vm_shell: /bin/vbash
           vm_shell_cwd: "/tmp"
           vm_shell_args: |-
-            -c "source /opt/vyatta/etc/functions/script-template #PTIㄱㅁㅋ
+            -c "source /opt/vyatta/etc/functions/script-template
             configure
             set system login user admin full-name Admin_User
             set system login user admin authentication plaintext-password VMware1!
@@ -70,7 +70,7 @@
             set system name-server 172.16.1.2
             set service ntp server kr.pool.ntp.org
             
-            set interfaces ethernㄷt eth1 ipv6 address no-default-link-local
+            set interfaces ethernet eth1 ipv6 address no-default-link-local
             set interfaces ethernet eth1 vif 10 description 'VLAN 10 - Site A Management'
             set interfaces ethernet eth1 vif 10 address 10.10.10.1/24
             set interfaces ethernet eth1 vif 10 ipv6 address no-default-link-local            
