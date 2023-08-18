@@ -10,7 +10,7 @@
       password: '{{ esxi_password }}'
       switch: '{{ project_id }}'
       hosts:  '{{ esxi_hostname }}'
-      portgroup: "{{ project_id + '-Openshift'}}"
+      portgroup: "{{ private_net }}"
       validate_certs: false
       security:
           promiscuous_mode: True

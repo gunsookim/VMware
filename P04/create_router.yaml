@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  vars_files: ./vars.yaml
+
+  tasks: 
+  - name: 04. Deploy VyOS OVA Template
+    community.vmware.vmware_deploy_ovf:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: 'false'
+      datacenter: '{{ datacenter_name }}'
+      folder: "{{ folder_prefix + project_id }}"
+      esxi_hostname: '{{ esxi_hostname }}'
+      datastore: '{{ datastore_name }}'
+      name: "{{ project_id + '-Router' }}"
+      networks: { 'Lab-Outside': "{{ public_net }}", 'Lab-Inside': "{{ private_net }}" }
+      power_on: yes
+      ovf: /mnt/c/Material/temp-vyos-1.4.ova
+    delegate_to: localhost
+
+  - name: Waiting 60 seconds for completing boot 
+    wait_for: 
+      timeout: 60
+    delegate_to: localhost

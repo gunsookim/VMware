@@ -1,0 +1,54 @@
+---
+- hosts: localhost
+  vars_files: ./vars.yaml
+
+  tasks: 
+    - name: 06. Create Project VMs 
+      community.vmware.vmware_guest:
+        validate_certs: 'false'
+        datacenter: '{{ datacenter_name }}'
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        folder: "{{ '4.Projects/' + project_id }}"
+        name: "{{ item.name }}"
+        state: poweredon
+        guest_id: "{{ item.g_id}}"
+        # This is hostname of particular ESXi server on which user wants VM to be deployed
+        esxi_hostname: "{{ esxi_hostname }}"
+        disk:
+        - size_gb: 10
+          type: thin
+          datastore: "{{ datastore_name}}"
+        hardware:
+          memory_mb: "{{ item.vMem }}"
+          num_cpus: "{{ item.vCPU }}"
+          scsi: paravirtual
+        cdrom:
+            - controller_number: 0
+              unit_number: 0
+              state: present
+              type: iso
+              iso_path: "{{ item.ISO }}"
+        networks:
+        - name: "{{ private_net }}"
+          label: "Network adapter 1"
+          #mac: aa:bb:dd:aa:00:14
+          ip: "{{private_net}}"
+          netmask: 255.255.255.0
+          device_type: vmxnet3
+        wait_for_ip_address: true
+        wait_for_ip_address_timeout: 60
+      delegate_to: localhost
+      register: deploy_vm
+      loop: 
+        - {name: "{{project_id + '-Bastion'}}", vCPU: 4, vMem: 16, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhel-8.6-x86_64-dvd.iso"}
+        - {name: "{{project_id + '-Bootstrap'}}", vCPU: 4, vMem: 16, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhel-8.6-x86_64-dvd.iso"}
+        - {name: "{{project_id + '-Master-01'}}", vCPU: 4, vMem: 16, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhel-8.6-x86_64-dvd.iso"}
+        - {name: "{{project_id + '-Master-02'}}", vCPU: 4, vMem: 16, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhel-8.6-x86_64-dvd.iso" }
+        - {name: "{{project_id + '-Master-03'}}", vCPU: 4, vMem: 16, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhel-8.6-x86_64-dvd.iso"}
+        - {name: "{{project_id + '-Worker-01'}}", vCPU: 2, vMem: 8, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhcos-4.12.17-x86_64-live.x86_64.iso"}
+        - {name: "{{project_id + '-Worker-02'}}", vCPU: 2, vMem: 8, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhcos-4.12.17-x86_64-live.x86_64.iso"}
+        - {name: "{{project_id + '-Worker-03'}}", vCPU: 2, vMem: 8, vHDD: 120, g_id: rhel8_64Guest, ISO: "[RECA3-04] ISOs/rhcos-4.12.17-x86_64-live.x86_64.iso"}
+        - {name: "{{project_id + '-Storage'}}", vCPU: 4, vMem: 16, vHDD: 32, g_id: freebsd64Guest, ISO: "[RECA3-04] ISOs/TrueNAS-13.0-U4.iso"}
+  

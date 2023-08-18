@@ -14,7 +14,8 @@
       validate_certs: no
       name: "{{ student_ID + '-DC' }}"
       state: "poweredon"
-      datacenter: '{{ datacenter_name }}'
+      
+      
       folder: "{{ '3.Students/' + student_ID }}"
       esxi_hostname: '{{ esxi_hostname }}'
       datastore: "{{ datastore_name }}"
