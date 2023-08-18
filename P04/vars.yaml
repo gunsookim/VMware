@@ -1,0 +1,14 @@
+ansible_python_interpreter: /bin/python3
+gather_facts: no
+vcenter_hostname: "172.16.1.10"
+vcenter_username: "s04@vclass.reca3"
+vcenter_password: "VMware1!"
+datacenter_name: "RECA3"
+
+project_id: "P04"
+
+
+esxi_hostname: "esxi-04.vclass.reca3"
+esxi_password: "VMware1!"
+esxi_username: "root"
+
