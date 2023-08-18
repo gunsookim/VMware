@@ -1,0 +1,34 @@
+ansible_python_interpreter: /bin/python3
+
+student_ID: "S04"
+
+vcenter_hostname: "172.16.1.10"
+vcenter_username: "S04@vclass.reca3"
+vcenter_password: "VMware1!"
+
+datacenter_name: "RECA3"
+
+folder_prefix: "RECA3/vm/3.Students/"
+
+# S01, S06, S11, S16, S21 --> esxi_host : esxi-01.vclass.reca3
+# S02, S07, S12, S17, S22 --> esxi_host : esxi-02.vclass.reca3
+# S03, S08, S13, S18, S23 --> esxi_host : esxi-03.vclass.reca3
+# S04, S09, S14, S19, S24 --> esxi_host : esxi-04.vclass.reca3
+# S00, S05, S10, S15, S20 --> esxi_host : esxi-05.vclass.reca3
+
+esxi_hostname: "esxi-04.vclass.reca3"
+esxi_password: "VMware1!"
+esxi_username: "root"
+
+public_net: "VM-172.16.1.x"
+private_net: "{{ student_ID + '-Trunk' }}"
+
+datastore_name: "RECA3-04"
+
+dc_template_name: "WinSvr2022-04"
+dc_snapshot_src_name: "RECA#3"
+
+sa_esxi_template_name: "sa-esxi-01.vclass.local-04"
+
+vcsa_template_name: "sa-vcsa-01.vclass.local-04"
+vcsa_snapshot_src_name: "Installed"

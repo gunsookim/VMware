@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  vars:
+    ansible_python_interpreter: /bin/python3
+    gather_facts: no
+    vcenter_hostname: "172.16.1.10"
+    vcenter_username: "s04@vclass.reca3"
+    vcenter_password: "VMware1!"
+    datacenter_name: "RECA3"
+    project_id: "P04"
+
+
+  tasks:
+  - name: Create a VM folder on given datacenter
+    community.vmware.vcenter_folder:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      datacenter_name: '{{ datacenter_name }}'
+      folder_name: '{{ project_id }}'
+#      parent_folder: "4.Projects"
+      folder_type: vm
+      state: absent #present
+      validate_certs: false
+    register: vm_folder_creation_result
+    delegate_to: localhost

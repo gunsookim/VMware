@@ -1,0 +1,60 @@
+---
+- hosts: localhost
+  vars_files: ./vars.yaml
+
+  tasks: 
+    - name: Add NVMe Disks to ESXi VMs
+      community.vmware.vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: 'false'
+        datacenter: '{{datacenter_name}}'
+        folder: '{{ folder_prefix + student_ID }}'
+        name: '{{ item.vmname }}'
+        disk:
+        - size_gb: 50
+          controller_type: 'nvme'
+          controller_number: 0
+          unit_number: 0
+          type: thin
+          datastore: '{{ datastore_name }}'
+        - size_gb: 50
+          controller_type: 'nvme'
+          controller_number: 0
+          unit_number: 1
+          type: thin
+          datastore: '{{ datastore_name }}'
+        - size_gb: 200
+          controller_type: 'nvme'
+          controller_number: 0
+          unit_number: 2
+          type: thin
+          datastore: '{{ datastore_name }}'
+        - size_gb: 200
+          controller_type: 'nvme'
+          controller_number: 0
+          unit_number: 3
+          type: thin
+          datastore: '{{ datastore_name }}'
+      with_items:
+      - {vmname: "{{ student_ID + '-SA-ESXi-01' }}" }
+      - {vmname: "{{ student_ID + '-SA-ESXi-02' }}" }
+      - {vmname: "{{ student_ID + '-SA-ESXi-03' }}" }      
+      delegate_to: localhost
+      register: deploy_vm
+
+    - name: Reboot ESXi VM
+      community.vmware.vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: 'false'        
+        folder: "{{ folder_prefix + student_ID }}"
+        name: "{{ item }}"
+        state: reboot-guest
+      loop:
+        - "{{student_ID+'-SA-ESXi-01'}}"
+        - "{{student_ID+'-SA-ESXi-02'}}"
+        - "{{student_ID+'-SA-ESXi-03'}}"
+      delegate_to: localhost
